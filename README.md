@@ -1,0 +1,1 @@
+I am 13 and I decided that I wanted to do something productive over winter break so I watched a tutorial on Youtube about Sci-Kit Learn and I came up with this. I added some inputs so that you can customize the parameters and I hope you enjoy this repo. Btw, make sure that all of your responses are exact (including spaces and capitals.)
