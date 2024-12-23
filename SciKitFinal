@@ -1,0 +1,129 @@
+#Loads Data
+import pandas as pd
+csvfile = input(str("Enter a CSV File or a url: "))
+df=pd.read_csv(csvfile)
+dropaskname = input("Name of Column to Drop (Type none if you don't need to): ")
+if dropaskname == "none":
+  print("Ok!")
+else:
+  df = df.drop(dropaskname, axis=1)
+  print("Ok, Got it!")
+
+
+#df
+
+#Data Seperation as X and Y
+yname = input(str("What do you want the y to be? "))
+print("X and Y determined")
+y=df[yname]
+x=df.drop(yname,axis=1)
+#x
+#y
+
+#Splitting into the Training and Data Sets, Random_State determines if you get the same training and testing splits every time
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2, random_state=100)
+#x_train
+#x_test
+#y_train
+#y_test
+
+#ML Model Bioding
+#Linear Regression, Model for ML
+from sklearn.linear_model import LinearRegression
+lr = LinearRegression()
+lr.fit(x_train,y_train)
+
+#Applying Model for Predictions
+y_lr_train_prediction = lr.predict(x_train)
+y_lr_test_prediction = lr.predict(x_test)
+#y_lr_test_prediction
+#y_lr_train_prediction
+
+#Testing Model Performance
+#MSE = Mean Squared Error, Basically Standard Deviation
+from sklearn.metrics import mean_squared_error, r2_score
+lr_train_mse = mean_squared_error(y_train, y_lr_train_prediction)
+lr_train_r2=r2_score(y_train, y_lr_train_prediction)
+
+lr_test_mse = mean_squared_error(y_test, y_lr_test_prediction)
+lr_test_r2=r2_score(y_test, y_lr_test_prediction)
+
+print("\n")
+print("Linear Regression: ")
+print("Train MSE: ",lr_train_mse)
+print("Train r2: ",lr_train_r2)
+print("Test MSE: ",lr_test_mse)
+print("Test r2: ",lr_test_r2)
+print("\n")
+
+#Formatting Data into a Pandas Table
+
+#lr_results = pd.DataFrame(["Linear Regression",lr_train_mse,lr_train_r2,lr_test_mse,lr_test_r2]).transpose()
+#lr_results.columns=["Method","Train MSE", "Train r2", "Test MSE", "Test r2"]
+#print(lr_results)
+print("\n")
+
+#Random Forest
+#Training Model
+regressor_or_classifier = input(str("Do you want a Regressor or Classifier? "))
+
+if regressor_or_classifier == "Regressor" or "regressor":
+  from sklearn.ensemble import RandomForestRegressor
+  rf = RandomForestRegressor(max_depth=15,random_state=100)
+  rf.fit(x_train,y_train)
+
+
+  #Applying The Model for a prediction
+  y_rf_train_prediction = rf.predict(x_train)
+  y_rf_test_prediction = rf.predict(x_test)
+
+  rf_train_mse = mean_squared_error(y_train, y_rf_train_prediction)
+  rf_train_r2=r2_score(y_train, y_rf_train_prediction)
+
+  rf_test_mse = mean_squared_error(y_test, y_rf_test_prediction)
+  rf_test_r2=r2_score(y_test, y_rf_test_prediction)
+else:
+  from sklearn.ensemble import RandomForestClassifier
+  rf = RandomForestClassifier(max_depth=15,random_state=100)
+  rf.fit(x_train,y_train)
+  #Applying The Model for a prediction
+  y_rf_train_prediction = rf.predict(x_train)
+  y_rf_test_prediction = rf.predict(x_test)
+
+  rf_train_mse = mean_squared_error(y_train, y_rf_train_prediction)
+  rf_train_r2=r2_score(y_train, y_rf_train_prediction)
+
+  rf_test_mse = mean_squared_error(y_test, y_rf_test_prediction)
+  rf_test_r2=r2_score(y_test, y_rf_test_prediction)
+
+effective = (rf_test_r2+rf_train_r2)
+effective = effective/2
+print("Train MSE Forest: ",rf_train_mse)
+print("Train r2 Forest: ",rf_train_r2)
+print("Test MSE Forest: ",rf_test_mse)
+print("Test r2 Forest: ",rf_test_r2)
+print("\n")
+effective = str(effective*100)
+print("Woah! Your AI is about "+effective+"% effective!")
+#Formatting Data into Pandas
+
+#rf_results = pd.DataFrame(["Random Forest",rf_train_mse,rf_train_r2,rf_test_mse,rf_test_r2]).transpose()
+#rf_results.columns=["Method","Train MSE F", "Train r2 F", "Test MSE F", "Test r2 F"]
+#print(rf_results)
+print("\n")
+
+#print(df_models)
+# Making A MatPlotLib Diagram for Random Forest
+import matplotlib.pyplot as plt
+import numpy as np
+
+z=np.polyfit(y_train, y_rf_train_prediction, 1)
+p=np.poly1d(z)
+
+plt.plot(y_train, p(y_train))
+
+plt.scatter(x=y_train, y=y_rf_train_prediction, alpha=0.5)
+plt.ylabel("Predict Forest")
+plt.xlabel("Experimental Forest")
